@@ -3145,7 +3145,7 @@ var qrcode = function() {
     if (!H) return;
     var box = $("plist"); box.innerHTML = "";
     var list = rosterState(), onl = list.filter(function(p){ return p.on; }).length;
-    $("plTitle").textContent = "Jugadores ("+onl+" conectados"+(list.length>onl ? " de "+list.length : "")+")";
+    $("plTitle").textContent = "Jugadores ("+onl+(onl===1?" conectado":" conectados")+(list.length>onl ? " de "+list.length : "")+")";
     if (!list.length){ box.appendChild(el("p","hint","Todavía no ha entrado nadie. Que escaneen el QR o abran el enlace.")); return; }
     list.forEach(function(p){
       var row = el("div","prow");
@@ -3251,8 +3251,9 @@ var qrcode = function() {
     if (!hits.length) return;
     pauseAuto();
     var w = phaseWord();
-    H.pause = {kind:"detect", pids:hits, title:"Pausa · hay "+w, text:"¿Quién tiene "+w.toLowerCase()+"? ¡Cántala con el botón!",
-      hostText:(hits.length>1 ? hits.length+" jugadores tienen " : "Un jugador tiene ")+w.toLowerCase()+". Espera a que la cante con su móvil."};
+    var fem = H.phase==="linea";
+    H.pause = {kind:"detect", pids:hits, title:"Pausa · hay "+w, text:"¿Quién tiene "+w.toLowerCase()+"? ¡"+(fem?"Cántala":"Cántalo")+" con el botón!",
+      hostText:(hits.length>1 ? hits.length+" jugadores tienen " : "Un jugador tiene ")+w.toLowerCase()+". Espera a que "+(hits.length>1?"lo canten":(fem?"la cante":"lo cante"))+" con su móvil."};
   }
   function queueClaim(p){ if (claimQueue.indexOf(p)<0) claimQueue.push(p); if (!checking) nextClaim(); }
   function nextClaim(){
@@ -3299,7 +3300,7 @@ var qrcode = function() {
         speak("¡Bingo! ¡Bingo correcto! Enhorabuena"+sayName+".", {done:finish});
       } else {
         H.pause = null;
-        H.msg = {id:rid(8), kind:"bad", type:type, pid:p.pid, text:name+": "+(type==="linea"?"la línea":"el bingo")+" no es correcto"};
+        H.msg = {id:rid(8), kind:"bad", type:type, pid:p.pid, text:name+": "+(type==="linea"?"la línea no es correcta":"el bingo no es correcto")};
         publishState(); renderHost(false);
         speak("Lo siento"+sayName+", no es correcto. Seguimos jugando.", {done:function(){ resumeGame(); finish(); }});
       }
