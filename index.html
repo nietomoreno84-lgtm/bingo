@@ -204,6 +204,10 @@
   .toast.bad{background:rgba(255,122,107,.18); border:1px solid rgba(255,122,107,.55)}
   .pause{background:rgba(244,193,75,.12); border:2px solid var(--gold); border-radius:14px; padding:10px 14px; font-weight:900; text-align:center}
   .confirm{display:inline-flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .soundbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--felt-2); border:1px solid var(--line); border-radius:12px; padding:8px 10px}
+  .soundbar .lastcall{font-weight:900; color:var(--ivory); margin-left:auto; display:inline-flex; align-items:center; gap:6px}
+  .soundbar .lastcall b{font-family:var(--display); font-weight:400; color:var(--gold); font-size:24px; line-height:1}
+  #btnSound.off{border-color:#7A3A33; color:#FFB4AA}
   .names{display:flex; flex-wrap:wrap; gap:8px}
   .nm{display:inline-flex; align-items:center; gap:6px; background:var(--felt); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-weight:800; font-size:14px}
   .nm.me{border-color:var(--gold)}
@@ -388,10 +392,16 @@
         <div class="phase" id="pPhase"></div>
         <span class="hint" id="pWho"></span>
       </div>
+      <div class="soundbar">
+        <button class="btn small" id="btnSound" aria-pressed="true">🔊 Sonido activado</button>
+        <span class="lastcall" id="pLast"></span>
+        <button class="btn small" id="btnRepeatP" hidden>Repetir</button>
+      </div>
+      <p class="hint" id="soundHint" style="margin:-8px 0 0"></p>
       <div id="pPause" class="pause" hidden></div>
       <div id="pToast" hidden></div>
       <div class="cards" id="pCards"></div>
-      <p class="hint" style="margin:0; text-align:center">Escucha los números en el ordenador y toca los tuyos para marcarlos. Tócalo otra vez para desmarcarlo.</p>
+      <p class="hint" style="margin:0; text-align:center">Escucha los números y toca los tuyos para marcarlos. Tócalo otra vez para desmarcarlo.</p>
       <button class="claim" id="btnClaim" disabled>¡LÍNEA!</button>
       <div class="hint" id="pClaimHint" style="text-align:center; margin-top:-8px"></div>
       <div class="row">
@@ -3054,7 +3064,8 @@ var qrcode = function() {
     function w(list){ return list.map(function(x){ return {pid:x.pid, name:names[x.pid]||x.name, code:x.code}; }); }
     return {v:2, room:H.room, epoch:H.epoch, seq:H.seq, ts:Date.now(), gid:H.gid, phase:H.phase, drawn:drawnNow(),
       pause: H.pause ? H.pause.text : "", msg: H.msg, winners: {linea:w(H.winners.linea), bingo:w(H.winners.bingo)},
-      players: rosterState(), host: H.hostName || ""};
+      players: rosterState(), host: H.hostName || "",
+      call: shownIdx ? {idx:shownIdx, n:H.order[shownIdx-1], text:callText(H.order[shownIdx-1]), rep:H.rep||0} : null};
   }
   function publishState(){
     if (!H) return;
@@ -3273,6 +3284,7 @@ var qrcode = function() {
   $("btnRepeat").addEventListener("click", function(){
     var n = shownIdx ? H.order[shownIdx-1] : null; if (!n || busy) return;
     clearTimeout(autoTimer); busy = true; updateButtons();
+    H.rep = (H.rep||0) + 1; publishState(); // los móviles la repiten también
     speak(callText(n), {done: afterCall});
   });
   $("btnPause").addEventListener("click", function(){
@@ -3476,6 +3488,18 @@ var qrcode = function() {
      JUGADOR (móvil): solo su cartón, marcado a mano
      ================================================================ */
   var P = null, pnet = null, S = null, lastStateAt = 0, firstState = true, lastMsgId = null, claimUntil = 0, bigIdx = 0, presTimer = null, toastTimer = null;
+  var lastCallKey = null, pQueue = [], pSpeaking = false;
+  /* Voz en el móvil: dice cada bola y los avisos, en orden y sin pisarse */
+  function soundOn(){ return !!P && P.voice !== false; }
+  function pNext(){
+    var t = pQueue.shift();
+    if (!t){ pSpeaking = false; return; }
+    pSpeaking = true;
+    speak(t, {force:true, done:function(){ pSpeaking = false; pNext(); }});
+  }
+  function pSay(text){ if (!soundOn() || !text) return; pQueue.push(text); if (pQueue.length>3) pQueue = pQueue.slice(-3); if (!pSpeaking) pNext(); }
+  function pSayNow(text){ if (!text) return; pQueue = [text]; pSpeaking = false; pNext(); }
+  function pStopSound(){ pQueue = []; pSpeaking = false; speakToken++; if (synth){ try{ synth.cancel(); }catch(e){} } }
   function pbase(){ return PREFIX + P.room; }
   function startPlayer(p){
     P = p; save("b90l.me", P);
@@ -3509,10 +3533,15 @@ var qrcode = function() {
     }
     lastStateAt = Date.now();
     S = o;
+    var c = S.call && typeof S.call.text==="string" && S.call.n>=1 && S.call.n<=N ? S.call : null;
+    var ck = c ? S.gid+":"+c.idx+":"+(c.rep||0) : null;
+    var sayCall = !firstState && ck && ck !== lastCallKey;
+    lastCallKey = ck;
     renderPlayer();
+    if (sayCall) pSay(c.text.slice(0,160));
     if (S.msg && S.msg.id !== lastMsgId){
       lastMsgId = S.msg.id;
-      if (!firstState) showToast(S.msg);
+      if (!firstState) pSay(showToast(S.msg));
     }
     if (!firstState && S.phase==="fin" && S.msg && S.msg.type==="bingo" && S.msg.kind==="win") celebrate();
     firstState = false;
@@ -3525,6 +3554,7 @@ var qrcode = function() {
     t.className = "toast "+(m.kind||"info"); t.textContent = text; t.hidden = false;
     clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, mine ? 12000 : 7000);
     if (navigator.vibrate && mine){ try{ navigator.vibrate(m.kind==="win" ? [120,60,120,60,240] : 200); }catch(e){} }
+    return text;
   }
   function me(){ return S && !S.closed && S.players ? S.players.find(function(x){ return x.pid===P.pid; }) : null; }
   function myMarks(){ if (!P.marks) P.marks = {}; var g = S && S.gid ? S.gid : 0; if (!P.marks[g]) P.marks[g] = []; return P.marks[g]; }
@@ -3537,6 +3567,14 @@ var qrcode = function() {
     else if (S.phase==="fin"){ ph.append("Partida "); ph.appendChild(el("b", null, "TERMINADA")); }
     else { ph.append("Jugando a "); ph.appendChild(el("b", null, S.phase==="linea"?"LÍNEA":"BINGO")); }
     var pz = $("pPause"); if (S && S.pause){ pz.hidden = false; pz.textContent = S.pause; } else pz.hidden = true;
+    var son = soundOn(), bs = $("btnSound");
+    bs.textContent = son ? "🔊 Sonido activado" : "🔇 Sonido apagado";
+    bs.setAttribute("aria-pressed", son ? "true" : "false"); bs.classList.toggle("off", !son);
+    var cl = S && !S.closed && S.call && S.call.n>=1 && S.call.n<=N ? S.call : null, pl = $("pLast");
+    pl.textContent = "";
+    if (son && cl){ pl.append("Última bola"); pl.appendChild(el("b", null, cl.n)); }
+    $("btnRepeatP").hidden = !(son && cl);
+    $("soundHint").textContent = son ? "Si estás en la misma habitación que el ordenador, apágalo para que no suene doble. En iPhone, quita el modo silencio." : "Las bolas solo se oyen en el ordenador.";
 
     var phase = S && !S.closed ? S.phase : null;
     // Cartones, marcados a mano
@@ -3614,6 +3652,13 @@ var qrcode = function() {
   });
   window.addEventListener("pagehide", function(){ if (P && pnet && P.room) pnet.pub(pbase()+"/p/"+P.pid, null, true); });
 
+  $("btnSound").addEventListener("click", function(){
+    P.voice = !soundOn(); save("b90l.me", P);
+    if (P.voice) pSayNow("Sonido activado"); else pStopSound();
+    renderPlayer();
+  });
+  $("btnRepeatP").addEventListener("click", function(){ if (S && S.call && soundOn()) pSayNow(String(S.call.text).slice(0,160)); });
+
   /* ----- Vista en grande (horizontal) ----- */
   function renderBig(){
     var mine = me(); if (!mine || !mine.cards.length){ closeBig(); return; }
@@ -3669,6 +3714,7 @@ var qrcode = function() {
     p.room = code; p.lastRoom = code; p.name = name; p.want = want;
     if (p.auto === undefined) p.auto = true;
     startPlayer(p);
+    if (p.voice !== false) pSayNow("Hola, "+name+". Oirás aquí cada bola."); // el toque desbloquea la voz del móvil
   });
 
   // Arranque
