@@ -116,6 +116,41 @@
   .winners{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
   .wpill{background:var(--felt); border:1px solid var(--gold); color:var(--gold); border-radius:999px; padding:4px 12px; font-weight:900; font-size:14px}
 
+  /* ===== Pantalla completa (modo presentación) ===== */
+  .board-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; flex-wrap:wrap}
+  .board-head h2{margin:0}
+  .pres-bar{display:none}
+  body.pres{overflow:hidden}
+  body.pres header.top, body.pres footer, body.pres .room-panel, body.pres .players-panel, body.pres #checkPanel,
+  body.pres .settings-panel, body.pres .board-head, body.pres .stage .speed, body.pres #btnFull{display:none!important}
+  body.pres .wrap{max-width:none; height:100vh; padding-inline:16px; padding-block:12px}
+  @supports (height:100dvh){ body.pres .wrap{height:100dvh} }
+  body.pres #scr-host{height:100%}
+  body.pres .caller{height:100%; grid-template-columns:minmax(290px,28vw) 1fr; align-items:stretch}
+  body.pres .stage{justify-content:flex-start; justify-content:safe center; overflow-y:auto; min-height:0; gap:10px; padding:14px}
+  body.pres .stage > *{flex-shrink:0}
+  body.pres .stage.has-alert .ball{width:min(19vh, 15vw)}
+  body.pres .stage.has-alert .ball .num{font-size:min(8.5vh, 6.5vw)}
+  body.pres .stage.has-alert .recent, body.pres .stage.has-alert #btnPause{display:none}
+  body.pres .right{height:100%; min-height:0}
+  body.pres .board-panel{flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; padding:12px 16px}
+  body.pres .pres-bar{display:flex; align-items:center; gap:10px 18px; flex-wrap:wrap; font-weight:800}
+  body.pres .pres-room{font-size:18px}
+  body.pres .pres-room b{font-family:var(--display); font-weight:400; color:var(--gold); letter-spacing:.12em; font-size:24px}
+  body.pres .pres-players{color:var(--muted)}
+  body.pres .pres-keys{color:var(--muted); font-size:13px; font-weight:700; margin-left:auto}
+  body.pres .board{width:min(100%, calc((100vh - 130px) * 10 / 9)); margin:auto; gap:min(0.7vw, 1vh, 9px)}
+  @supports (height:100dvh){ body.pres .board{width:min(100%, calc((100dvh - 130px) * 10 / 9))} }
+  body.pres .cell{font-size:min(2.4vw, 3.7vh); border-width:3px}
+  body.pres .cell.last{box-shadow:0 0 0 4px var(--gold)}
+  body.pres .ball{width:min(30vh, 22vw)}
+  body.pres .ball .num{font-size:min(13vh, 9.5vw)}
+  body.pres .saying{font-size:min(3.4vh, 26px); min-height:0}
+  body.pres .chip{width:min(5.4vh, 46px); height:min(5.4vh, 46px); font-size:min(2.2vh, 17px)}
+  body.pres .controls{gap:8px}
+  body.pres .controls .btn{min-height:min(6vh, 46px); padding-block:6px}
+  body.pres .controls .btn.primary{min-height:min(8vh, 58px); font-size:min(3vh, 22px)}
+
   /* Sala */
   .room{display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center}
   @media (max-width:560px){ .room{grid-template-columns:1fr; justify-items:center; text-align:center} }
@@ -269,6 +304,7 @@
             <button class="btn" id="btnRepeat" disabled>Repetir</button>
           </div>
           <button class="btn ghost" id="btnPause">✋ Pausa para comprobar</button>
+          <button class="btn" id="btnFull">⛶ Pantalla completa con el tablero</button>
           <div class="speed">
             <label class="label" for="gap">Pausa entre bolas</label>
             <input type="range" id="gap" min="2" max="15" step="1" value="5">
@@ -279,7 +315,7 @@
       </div>
 
       <div class="right">
-        <div class="panel">
+        <div class="panel room-panel">
           <div class="room">
             <div class="qr" id="qr" aria-label="Código QR para entrar"></div>
             <div class="stack">
@@ -291,12 +327,18 @@
             </div>
           </div>
         </div>
-        <div class="panel">
+        <div class="panel players-panel">
           <h2 id="plTitle">Jugadores</h2>
           <div class="plist" id="plist"></div>
         </div>
-        <div class="panel">
-          <h2>Tablero</h2>
+        <div class="panel board-panel">
+          <div class="board-head"><h2>Tablero</h2><button class="btn small" id="btnFull2">⛶ Pantalla completa</button></div>
+          <div class="pres-bar" id="presBar">
+            <span class="pres-room">Sala <b id="presRoom"></b></span>
+            <span class="pres-players" id="presPlayers"></span>
+            <span class="pres-keys">Espacio: sacar bola · A: automático · Esc: salir</span>
+            <button class="btn small" id="btnExitFull">Salir de pantalla completa</button>
+          </div>
           <div class="board" id="board" aria-label="Números que han salido"></div>
         </div>
         <div class="panel" id="checkPanel" hidden>
@@ -304,7 +346,7 @@
           <div id="checkOut" class="stack"></div>
           <div class="row" style="margin-top:10px"><button class="btn" id="btnCloseCheck">Cerrar</button></div>
         </div>
-        <div class="panel">
+        <div class="panel settings-panel">
           <details class="settings">
             <summary>Ajustes, nueva partida y sala</summary>
             <div class="set-grid">
@@ -3126,6 +3168,7 @@ var qrcode = function() {
   }
   function renderAlert(){
     var box = $("alertBox"), acts = $("alertActs");
+    document.querySelector("#scr-host .stage").classList.toggle("has-alert", !!H.pause);
     if (!H.pause){ box.hidden = true; return; }
     box.hidden = false; acts.innerHTML = "";
     $("alertTitle").textContent = H.pause.title || "Pausa";
@@ -3146,6 +3189,7 @@ var qrcode = function() {
     var box = $("plist"); box.innerHTML = "";
     var list = rosterState(), onl = list.filter(function(p){ return p.on; }).length;
     $("plTitle").textContent = "Jugadores ("+onl+(onl===1?" conectado":" conectados")+(list.length>onl ? " de "+list.length : "")+")";
+    if (isPres()) updatePresBar();
     if (!list.length){ box.appendChild(el("p","hint","Todavía no ha entrado nadie. Que escaneen el QR o abran el enlace.")); return; }
     list.forEach(function(p){
       var row = el("div","prow");
@@ -3175,6 +3219,7 @@ var qrcode = function() {
     });
   }
   function showCards(pids, title){
+    if (isPres()) exitPres();
     var out = $("checkOut"); out.innerHTML = ""; $("checkTitle").textContent = title;
     var set = toSet(drawnNow()), names = displayNames();
     pids.forEach(function(pid){
@@ -3206,7 +3251,7 @@ var qrcode = function() {
     setSaying("saying", "Sacando bola…", "");
     updateButtons();
     speak(callText(n), {
-      start: function(){ shownIdx = H.idx; H.msg = null; renderHost(true); detect(); publishState(); },
+      start: function(){ shownIdx = H.idx; H.msg = null; detect(); renderHost(true); publishState(); },
       done: afterCall
     });
   }
@@ -3353,6 +3398,52 @@ var qrcode = function() {
     function ok(){ $("copyMsg").textContent = "Enlace copiado"; }
     function fb(){ var r = document.createRange(); r.selectNodeContents($("roomLink")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); $("copyMsg").textContent = "Selecciona y copia el enlace"; }
     try{ navigator.clipboard.writeText(t).then(ok, fb); }catch(e){ fb(); }
+  });
+
+  /* ----- Pantalla completa con el tablero entero ----- */
+  function isPres(){ return document.body.classList.contains("pres"); }
+  function fsElement(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function updatePresBar(){
+    if (!H) return;
+    $("presRoom").textContent = H.room;
+    var n = rosterState().filter(function(p){ return p.on; }).length;
+    $("presPlayers").textContent = n===1 ? "1 jugador conectado" : n+" jugadores conectados";
+  }
+  function enterPres(){
+    if (!H) return;
+    document.body.classList.add("pres");
+    updatePresBar(); keepAwake();
+    var d = document.documentElement;
+    try{
+      var r = d.requestFullscreen ? d.requestFullscreen({navigationUI:"hide"}) : (d.webkitRequestFullscreen ? d.webkitRequestFullscreen() : null);
+      if (r && r.catch) r.catch(function(){});
+    }catch(e){}
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  function exitPres(){
+    document.body.classList.remove("pres");
+    if (fsElement()){
+      try{ var r = (document.exitFullscreen || document.webkitExitFullscreen).call(document); if (r && r.catch) r.catch(function(){}); }catch(e){}
+    }
+  }
+  function onFsChange(){ if (!fsElement() && isPres()) document.body.classList.remove("pres"); }
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+  $("btnFull").addEventListener("click", enterPres);
+  $("btnFull2").addEventListener("click", enterPres);
+  $("btnExitFull").addEventListener("click", exitPres);
+  document.addEventListener("keydown", function(e){
+    if (!H || $("scr-host").hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target && e.target.tagName ? e.target.tagName : "";
+    if (t==="INPUT" || t==="TEXTAREA" || t==="SELECT") return;
+    var k = e.key;
+    if ((k==="f" || k==="F") && !e.repeat){ e.preventDefault(); if (isPres()) exitPres(); else enterPres(); return; }
+    if (!isPres()) return;
+    if (k==="Escape"){ exitPres(); return; }
+    if (t==="BUTTON") return; // el botón que tenga el foco ya responde solo a Espacio/Intro
+    if ((k===" " || k==="Enter") && !e.repeat){ e.preventDefault(); if (!$("btnDraw").disabled) $("btnDraw").click(); }
+    else if ((k==="a" || k==="A") && !e.repeat){ if (!$("btnAuto").disabled) $("btnAuto").click(); }
+    else if ((k==="r" || k==="R") && !e.repeat){ if (!$("btnRepeat").disabled) $("btnRepeat").click(); }
   });
 
   /* ----- Ajustes del bombo ----- */
