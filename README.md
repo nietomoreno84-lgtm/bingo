@@ -1,2 +1,5 @@
-# bingo
-Bingo 90 en vivo: el PC canta los números y los jugadores se conectan con el móvil
+# Bingo 70 en vivo
+
+El ordenador canta las bolas (del 1 al 70) y los jugadores se conectan con el móvil.
+
+Jugar: https://nietomoreno84-lgtm.github.io/bingo/
