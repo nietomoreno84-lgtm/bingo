@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0C2E24">
-<title>Bingo 90 en vivo</title>
+<title>Bingo 70 en vivo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nunito:wght@500;700;800;900&display=swap">
@@ -139,9 +139,9 @@
   body.pres .pres-room b{font-family:var(--display); font-weight:400; color:var(--gold); letter-spacing:.12em; font-size:24px}
   body.pres .pres-players{color:var(--muted)}
   body.pres .pres-keys{color:var(--muted); font-size:13px; font-weight:700; margin-left:auto}
-  body.pres .board{width:min(100%, calc((100vh - 130px) * 10 / 9)); margin:auto; gap:min(0.7vw, 1vh, 9px)}
-  @supports (height:100dvh){ body.pres .board{width:min(100%, calc((100dvh - 130px) * 10 / 9))} }
-  body.pres .cell{font-size:min(2.4vw, 3.7vh); border-width:3px}
+  body.pres .board{width:min(100%, calc((100vh - 130px) * 10 / 7)); margin:auto; gap:min(0.8vw, 1.2vh, 10px)}
+  @supports (height:100dvh){ body.pres .board{width:min(100%, calc((100dvh - 130px) * 10 / 7))} }
+  body.pres .cell{font-size:min(2.6vw, 4.6vh); border-width:3px}
   body.pres .cell.last{box-shadow:0 0 0 4px var(--gold)}
   body.pres .ball{width:min(30vh, 22vw)}
   body.pres .ball .num{font-size:min(13vh, 9.5vw)}
@@ -176,9 +176,9 @@
   .card-head .code small{font-family:var(--body); font-size:11px; letter-spacing:.08em; font-weight:900; opacity:.9; margin-right:6px; text-transform:uppercase}
   .card-head .tools{display:flex; gap:6px}
   .card-head .tools button{background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.5); color:#fff; border-radius:9px; padding:5px 10px; font-weight:800; font-size:13px; min-height:34px}
-  .grid{display:grid; grid-template-columns:repeat(9,1fr); gap:3px; padding:6px}
+  .grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; padding:6px}
   .sq{aspect-ratio:1/1.05; border-radius:6px; background:#fff; display:grid; place-items:center; border:0; padding:0;
-      font-family:var(--display); font-size:clamp(15px,4.4vw,30px); color:var(--ink); position:relative; font-variant-numeric:tabular-nums;
+      font-family:var(--display); font-size:clamp(17px,5.6vw,32px); color:var(--ink); position:relative; font-variant-numeric:tabular-nums;
       user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation}
   .sq.blank{background:var(--s); opacity:.22}
   .sq > span{position:relative; z-index:1}
@@ -240,7 +240,7 @@
   .bigview .card{flex:1; display:flex; flex-direction:column; min-height:0}
   .bigview .card-head{display:none}
   .bigview .grid{flex:1; grid-template-rows:repeat(3,1fr); gap:5px; padding:6px}
-  .bigview .sq{aspect-ratio:auto; font-size:calc(min(var(--W) / 9, (var(--H) - 120px) / 3) * .5); border-radius:10px}
+  .bigview .sq{aspect-ratio:auto; font-size:calc(min(var(--W) / 7, (var(--H) - 120px) / 3) * .5); border-radius:10px}
   .bigview .card-status{padding:6px 10px; font-size:18px}
 
   .celebrate{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:30}
@@ -254,7 +254,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="mini-ball" aria-hidden="true"></div><h1>Bingo <span>90</span></h1></div>
+    <div class="brand"><div class="mini-ball" aria-hidden="true"></div><h1>Bingo <span>70</span></h1></div>
     <div class="conn" id="conn" hidden><span class="dot" id="connDot"></span><span id="connText">Conectando…</span></div>
   </header>
 
@@ -311,8 +311,8 @@
           <button class="btn" id="btnFull">⛶ Pantalla completa con el tablero</button>
           <div class="speed">
             <label class="label" for="gap">Pausa entre bolas</label>
-            <input type="range" id="gap" min="2" max="15" step="1" value="5">
-            <output id="gapOut" for="gap">5 s</output>
+            <input type="range" id="gap" min="1" max="5" step="1" value="3">
+            <output id="gapOut" for="gap">3 s</output>
           </div>
           <div id="voiceWarn" class="notice" hidden></div>
         </div>
@@ -417,7 +417,7 @@
     </div>
   </section>
 
-  <footer>Bingo 90 en vivo · series de 6 cartones sin números repetidos · cada partida se mezcla al azar</footer>
+  <footer>Bingo 70 en vivo · series de 4 cartones sin números repetidos · cada partida se mezcla al azar</footer>
 </div>
 
 <div class="bigview" id="bigview" hidden>
@@ -2756,7 +2756,7 @@ var qrcode = function() {
 <script>
 (function(){
   "use strict";
-  var N = 90, MAXC = 4, MAX_PLAYERS = 40;
+  var N = 70, MAXC = 4, MAX_PLAYERS = 40;
   var BALL = ["#E4572E","#3D7DDB","#E9A21F","#9B5DE5","#17A898","#D6457F","#5AA832","#2F9BD1","#C77D2A"];
   var SERIES = [
     {name:"Roja", s:"#C8233A", t:"#FDE6E9"}, {name:"Azul", s:"#1E5AA8", t:"#E4EDFA"},
@@ -2766,11 +2766,11 @@ var qrcode = function() {
   ];
   var ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sin O, 0, I, 1
   var DIG = ["cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
-  var DEFAULT_PHRASES = {1:"el galán",11:"las banderillas",12:"la docena",13:"la mala pata",15:"la niña bonita",22:"los dos patitos",25:"Navidad",33:"la edad de Cristo",44:"cuácara, cuácara",48:"el borrego",55:"los civiles",77:"las banderas",88:"las calabazas",90:"el abuelo"};
+  var DEFAULT_PHRASES = {1:"el galán",11:"las banderillas",12:"la docena",13:"la mala pata",15:"la niña bonita",22:"los dos patitos",25:"Navidad",33:"la edad de Cristo",44:"cuácara, cuácara",48:"el borrego",55:"los civiles",67:"six seven, Eric",69:"qué rico"};
 
   var qs = new URLSearchParams(location.search);
   var BROKERS = qs.get("broker") ? qs.get("broker").split(",") : ["wss://broker.hivemq.com:8884/mqtt", "wss://broker.emqx.io:8084/mqtt"];
-  var PREFIX = "bingo90dnm/v2/";
+  var PREFIX = "bingo70dnm/v3/"; // salas del bingo de 70 (separadas de las antiguas de 90)
 
   function $(id){ return document.getElementById(id); }
   function el(tag, cls, text){ var e=document.createElement(tag); if (cls) e.className=cls; if (text!=null) e.textContent=text; return e; }
@@ -2790,54 +2790,54 @@ var qrcode = function() {
   function cleanName(s){ return String(s||"").replace(/[\u0000-\u001f\u007f<>]/g,"").replace(/\s+/g," ").trim().slice(0,16); }
   function show(scr){ ["home","host","player"].forEach(function(x){ $("scr-"+x).hidden = x!==scr; }); }
 
-  /* ---------- Series de 6 cartones (90 bolas) generadas desde un código ---------- */
+  /* ---------- Series de 4 cartones (70 bolas) generadas desde un código ----------
+     Cartón: 3 filas x 7 columnas (1-9, 10-19, ..., 50-59, 60-70), 5 números por fila, 15 en total.
+     Dentro de una serie ningún número se repite. */
+  var NCOLS = 7, PER_SERIE = 4;
   function hashStr(s){ var h = 2166136261>>>0; for (var i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619)>>>0; } return h; }
   function rng(seed){ return function(){ seed = (seed + 0x6D2B79F5)>>>0; var t = seed; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14)>>>0) / 4294967296; }; }
-  function colNums(c){ var a=[], lo = c===0?1:c*10, hi = c===8?90:c*10+9; for (var n=lo;n<=hi;n++) a.push(n); return a; }
-  function colOf(n){ return n===90 ? 8 : Math.floor(n/10); }
+  function colNums(c){ var a=[], lo = c===0?1:c*10, hi = c===NCOLS-1?70:c*10+9; for (var n=lo;n<=hi;n++) a.push(n); return a; }
+  function colOf(n){ return n===70 ? NCOLS-1 : Math.floor(n/10); }
   function rshuffle(a, r){ for (var j=a.length-1;j>0;j--){ var k=Math.floor(r()*(j+1)); var t=a[j]; a[j]=a[k]; a[k]=t; } return a; }
-  // Devuelve 6 cartones; cada uno es filas[3][9] con número o 0 (hueco)
+  // Devuelve 4 cartones; cada uno es filas[3][7] con número o 0 (hueco)
   function serieFromCode(code){
-    var r = rng(hashStr("bingo90:"+code));
-    var cnt;
-    for (var tries=0; tries<500; tries++){
-      var extra = [], rem = [6,6,6,6,6,6], ok = true;
-      for (var i=0;i<6;i++) extra.push([0,0,0,0,0,0,0,0,0]);
-      var need = [3,4,4,4,4,4,4,4,5];
-      var order = rshuffle([0,1,2,3,4,5,6,7,8], r);
-      for (var oi=0; oi<9 && ok; oi++){
-        var c = order[oi];
-        for (var u=0; u<need[c]; u++){
-          var best = -1, bestRem = 0, ties = 0;
-          for (var cd=0; cd<6; cd++){
-            if (rem[cd]>0 && extra[cd][c]<2){
-              if (rem[cd]>bestRem){ best=cd; bestRem=rem[cd]; ties=1; }
-              else if (rem[cd]===bestRem){ ties++; if (r()*ties<1) best=cd; }
-            }
+    var r = rng(hashStr("bingo70:"+code));
+    var size = [], c0; for (c0=0;c0<NCOLS;c0++) size.push(colNums(c0).length);
+    var cnt = null;
+    for (var tries=0; tries<500 && !cnt; tries++){
+      // 1 número por columna en cada cartón y 8 extra por cartón (máx. 3 por columna)
+      var extra = [], left = size.map(function(s){ return s - PER_SERIE; }), ok = true;
+      for (var i=0;i<PER_SERIE;i++) extra.push([0,0,0,0,0,0,0]);
+      var units = [];
+      for (var k0=0;k0<PER_SERIE;k0++) for (var u=0;u<15-NCOLS;u++) units.push(k0);
+      rshuffle(units, r);
+      for (var ui=0; ui<units.length && ok; ui++){
+        var k = units[ui], best = -1, bestLeft = 0, ties = 0;
+        for (var c=0;c<NCOLS;c++){
+          if (extra[k][c]<2 && left[c]>0){
+            if (left[c]>bestLeft){ best=c; bestLeft=left[c]; ties=1; }
+            else if (left[c]===bestLeft){ ties++; if (r()*ties<1) best=c; }
           }
-          if (best<0){ ok=false; break; }
-          extra[best][c]++; rem[best]--;
         }
+        if (best<0){ ok=false; break; }
+        extra[k][best]++; left[best]--;
       }
-      if (ok && rem.every(function(x){return x===0;})){ cnt = extra.map(function(row){ return row.map(function(x){return x+1;}); }); break; }
+      if (ok) cnt = extra.map(function(row){ return row.map(function(x){ return x+1; }); });
     }
-    // Repartir los números de cada columna entre los 6 cartones
-    var cards = [];
-    for (var cd2=0; cd2<6; cd2++) cards.push([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
-    var colsFor = []; // colsFor[card][col] = números ordenados
-    for (var a=0;a<6;a++) colsFor.push([]);
-    for (var c2=0;c2<9;c2++){
+    var cards = [], colsFor = [];
+    for (var a=0;a<PER_SERIE;a++){ cards.push([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]); colsFor.push([]); }
+    for (var c2=0;c2<NCOLS;c2++){
       var nums = rshuffle(colNums(c2), r), p = 0;
-      for (var b=0;b<6;b++){ colsFor[b][c2] = nums.slice(p, p+cnt[b][c2]).sort(function(x,y){return x-y;}); p += cnt[b][c2]; }
+      for (var b=0;b<PER_SERIE;b++){ colsFor[b][c2] = nums.slice(p, p+cnt[b][c2]).sort(function(x,y){return x-y;}); p += cnt[b][c2]; }
     }
     // Colocar en 3 filas de 5 números
-    for (var k=0;k<6;k++){
+    for (var kk=0;kk<PER_SERIE;kk++){
       var placed = null;
-      for (var t2=0; t2<200 && !placed; t2++){
+      for (var t2=0; t2<300 && !placed; t2++){
         var cap = [5,5,5], rowsOf = [], good = true;
-        var cols = rshuffle([0,1,2,3,4,5,6,7,8], r).sort(function(x,y){ return cnt[k][y]-cnt[k][x]; });
-        for (var ci=0; ci<9; ci++){
-          var col = cols[ci], m = cnt[k][col];
+        var cols = rshuffle([0,1,2,3,4,5,6], r).sort(function(x,y){ return cnt[kk][y]-cnt[kk][x]; });
+        for (var ci=0; ci<NCOLS; ci++){
+          var col = cols[ci], m = cnt[kk][col];
           var rowsIdx = rshuffle([0,1,2], r).sort(function(x,y){ return cap[y]-cap[x]; }).slice(0,m);
           if (rowsIdx.some(function(ri){ return cap[ri]<=0; })){ good=false; break; }
           rowsIdx.forEach(function(ri){ cap[ri]--; });
@@ -2845,7 +2845,7 @@ var qrcode = function() {
         }
         if (good && cap[0]===0 && cap[1]===0 && cap[2]===0) placed = rowsOf;
       }
-      for (var c3=0;c3<9;c3++){ placed[c3].forEach(function(ri, j){ cards[k][ri][c3] = colsFor[k][c3][j]; }); }
+      for (var c3=0;c3<NCOLS;c3++){ placed[c3].forEach(function(ri, j){ cards[kk][ri][c3] = colsFor[kk][c3][j]; }); }
     }
     return cards;
   }
@@ -2858,7 +2858,7 @@ var qrcode = function() {
     do { s = rid(5); tries++; } while (avoid && serieColor(s)===avoid && tries<50);
     return s;
   }
-  function validCode(c){ if (typeof c!=="string" || !/^[A-Z2-9]{5}-[1-6]$/.test(c)) return false; for (var i=0;i<5;i++) if (ALPHA.indexOf(c[i])<0) return false; return true; }
+  function validCode(c){ if (typeof c!=="string" || !/^[A-Z2-9]{5}-[1-4]$/.test(c)) return false; for (var i=0;i<5;i++) if (ALPHA.indexOf(c[i])<0) return false; return true; }
   var serieCache = {};
   function cardRows(code){ var s = code.slice(0,5), n = +code.slice(6); if (!serieCache[s]) serieCache[s] = serieFromCode(s); return serieCache[s][n-1]; }
   function evalCard(code, set){
@@ -2905,8 +2905,15 @@ var qrcode = function() {
   }
 
   /* ================= Voz ================= */
-  var opts = Object.assign({voice:true, phrases:true, digits:true, names:true, rate:0.9, gap:5, voiceURI:"", autoStop:true, redeal:true}, load("b90l.opts", {}));
+  var opts = Object.assign({voice:true, phrases:true, digits:true, names:true, rate:0.9, gap:3, voiceURI:"", autoStop:true, redeal:true}, load("b90l.opts", {}));
+  opts.gap = Math.max(1, Math.min(5, Math.round(+opts.gap) || 3)); // pausa entre bolas: de 1 a 5 segundos
   var phrases = load("b90l.phrases", null) || Object.assign({}, DEFAULT_PHRASES);
+  if (load("b90l.phrasesV", 0) < 3){ // añadir las frases nuevas (67 y 69) a las frases guardadas
+    if (!phrases[67]) phrases[67] = DEFAULT_PHRASES[67];
+    if (!phrases[69]) phrases[69] = DEFAULT_PHRASES[69];
+    Object.keys(phrases).forEach(function(k){ if (+k > N) delete phrases[k]; });
+    save("b90l.phrases", phrases); save("b90l.phrasesV", 3);
+  }
   var synth = ("speechSynthesis" in window) ? window.speechSynthesis : null;
   var voices = [], speakToken = 0, currentUtter = null;
   function loadVoices(){
@@ -3039,7 +3046,7 @@ var qrcode = function() {
     return out;
   }
   function nextCode(){
-    if (!H.alloc.s || H.alloc.n>6){ H.alloc.s = newSerie(H.lastColor); H.lastColor = serieColor(H.alloc.s); H.alloc.n = 1; }
+    if (!H.alloc.s || H.alloc.n>PER_SERIE){ H.alloc.s = newSerie(H.lastColor); H.lastColor = serieColor(H.alloc.s); H.alloc.n = 1; }
     return H.alloc.s+"-"+(H.alloc.n++);
   }
   function assign(p){
@@ -3062,7 +3069,7 @@ var qrcode = function() {
   function buildState(){
     var names = displayNames();
     function w(list){ return list.map(function(x){ return {pid:x.pid, name:names[x.pid]||x.name, code:x.code}; }); }
-    return {v:2, room:H.room, epoch:H.epoch, seq:H.seq, ts:Date.now(), gid:H.gid, phase:H.phase, drawn:drawnNow(),
+    return {v:3, room:H.room, epoch:H.epoch, seq:H.seq, ts:Date.now(), gid:H.gid, phase:H.phase, drawn:drawnNow(),
       pause: H.pause ? H.pause.text : "", msg: H.msg, winners: {linea:w(H.winners.linea), bingo:w(H.winners.bingo)},
       players: rosterState(), host: H.hostName || "",
       call: shownIdx ? {idx:shownIdx, n:H.order[shownIdx-1], text:callText(H.order[shownIdx-1]), rep:H.rep||0} : null};
@@ -3173,7 +3180,7 @@ var qrcode = function() {
     var names = displayNames(), wb = $("hostWinners"); wb.innerHTML = "";
     H.winners.linea.forEach(function(x){ wb.appendChild(el("span","wpill","Línea: "+(names[x.pid]||x.name))); });
     H.winners.bingo.forEach(function(x){ wb.appendChild(el("span","wpill","Bingo: "+(names[x.pid]||x.name))); });
-    if (H.idx>=N && H.phase!=="fin" && !busy) setSaying("saying", "Han salido las 90 bolas", "Empieza una partida nueva en Ajustes");
+    if (H.idx>=N && H.phase!=="fin" && !busy) setSaying("saying", "Han salido las "+N+" bolas", "Empieza una partida nueva en Ajustes");
     renderAlert();
     updateButtons();
   }
@@ -3375,7 +3382,7 @@ var qrcode = function() {
       n.addEventListener("click", showNewBtn);
       box.append(el("span","hint","¿Seguro? Se termina la partida actual."), y, n); n.focus();
     });
-    box.append(b, el("span","hint","Mezcla las 90 bolas otra vez. Los jugadores siguen conectados."));
+    box.append(b, el("span","hint","Mezcla las "+N+" bolas otra vez. Los jugadores siguen conectados."));
   }
   function newGame(){
     setAuto(false); resumeAuto = false; speakToken++; afterSpeech = null; busy = false; claimQueue = []; checking = false;
@@ -3525,7 +3532,7 @@ var qrcode = function() {
     if (topic !== pbase()+"/s") return;
     if (text===""){ if (S){ S = {closed:true}; renderPlayer(); } return; }
     var o; try{ o = JSON.parse(text); }catch(e){ return; }
-    if (!o || o.v!==2 || o.room!==P.room || !Array.isArray(o.drawn) || !Array.isArray(o.players)) return;
+    if (!o || o.v!==3 || o.room!==P.room || !Array.isArray(o.drawn) || !Array.isArray(o.players)) return;
     o.players.forEach(function(x){ x.name = cleanName(x.name) || "Jugador"; x.cards = Array.isArray(x.cards) ? x.cards.filter(validCode) : []; });
     if (S && !S.closed){
       if (o.epoch < S.epoch || (o.epoch===S.epoch && o.seq < S.seq)) return;
@@ -3683,6 +3690,7 @@ var qrcode = function() {
   var hashRoom = (location.hash.match(/sala=([A-Za-z0-9]{6})/) || [])[1];
   hashRoom = hashRoom ? hashRoom.toUpperCase() : null;
   var savedHost = load("b90l.host", null);
+  if (savedHost && (!Array.isArray(savedHost.order) || savedHost.order.length!==N)){ savedHost = null; try{ localStorage.removeItem("b90l.host"); }catch(e){} }
   var savedMe = load("b90l.me", null) || {};
   function goHome(){
     show("home");
